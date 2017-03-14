@@ -2,34 +2,16 @@
 <html lang = "en-US">
 <head>
     <meta charset = "UTF-8">
-    <title>Logan's Maze</title>
+    <title>Brick Breaker</title>
+    <script src ="input.js"></script>
+    <script src = "objects.js"></script>
     <script src = "graphics.js"></script>
     <script src = "game.js"></script>
-    <script src = "objects.js"></script>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<body onload = "gameCheck(5)">
-    <div class = "header">
-      <div class="" id = "score"></div>
-      <div class="" id = "time"></div>
-    </div>
-    <div class="buttons">
-      <div class="iButton">
-        <button class="button" type="button" onClick="gameCheck(5)">5x5</button>
-      </div>
-      <div class="iButton">
-        <button class="button" type="button" onClick="gameCheck(10)">10x10</button>
-      </div>
-      <div class="iButton">
-        <button class="button" type="button" onClick="gameCheck(15)">15x15</button>
-      </div>
-      <div class="iButton">
-        <button class="button" type="button" onClick="gameCheck(20)">20x20</button>
-      </div>
-    </div>
+<body onload = "BrickBreak.initialize()">
     <div class="maze">
       <canvas id = "canvas-main" width = "1000" height = "1000" style = "width: 90%; height: 90%"></canvas>
     </div>
-    <div class="scoreboard" id="highScore"></div>
 </body>
 </html>
