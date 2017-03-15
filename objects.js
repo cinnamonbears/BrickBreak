@@ -8,6 +8,7 @@ let Objects = (function(){
     let y = spec.y;
     let height = spec.height;
     let width = spec.width;
+    let speed = 300;
 
     that.getDimensions = function(){
       return {x, y, width, height};
@@ -15,16 +16,16 @@ let Objects = (function(){
 
     that.moveLeft = function(time){
       if(x >= 0){
-        x -= 200*(time / 1000);
+        x -= speed*(time / 1000);
       }
     }
 
     that.moveRight = function(time){
       if(x <= 1000-width){
-        x += 200*(time / 1000);
+        x += speed*(time / 1000);
       }
     }
-    
+
     that.updateSize = function(){
       console.log('size')
     }
@@ -36,10 +37,36 @@ let Objects = (function(){
     let that = {};
     let x = spec.x;
     let y = spec.y;
-    let speed = 0;
+    let width = spec.width;
+    let height = spec.height;
+    let velocity = spec.velocity;
+    let left = true;
+    let up = true;
 
     that.update = function(movement){
       spec.location += movement
+    }
+
+    that.getDimensions = function(){
+      return {x, y, width, height};
+    }
+
+    that.updateBallLoacation = function(elapsedTime){
+      if(left){
+        x -= velocity*(elapsedTime/1000);
+      }else{
+        x += velocity*(elapsedTime/1000);
+      }if(up){
+        y -= velocity*(elapsedTime/1000);
+      }else{
+        y += velocity*(elapsedTime/1000);
+      }
+    }
+    that.reverseX = function(){
+      left ? left = false : left= true;
+    }
+    that.reverseY = function(){
+      up ? up = false : up = true;
     }
 
     return that;
@@ -51,13 +78,21 @@ let Objects = (function(){
     let y = spec.y;
     let width = spec.width;
     let height = spec.height;
-    let exists = true;
+    let visible = spec.visible;
 
-    that.update = function(broken){
-      if(broken){
-        exists = false;
-      }
+    that.getVisible = function(){
+      return visible;
     }
+
+    that.getDimensions = function(){
+      return {x, y, width, height};
+    }
+
+    that.update = function(){
+      visible = false;
+    }
+
+    return that;
   }
 
   return{

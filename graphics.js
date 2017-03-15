@@ -18,6 +18,10 @@ let Graphics = (function(){
     context.clear();
   }
 
+  function stroke(){
+    context.stroke();
+  }
+
   function drawOutline(size){
     context.beginPath();
     context.moveTo(0,0);
@@ -27,19 +31,33 @@ let Graphics = (function(){
     context.closePath();
     context.lineWidth = 10
     //context.strokeStyle = 'rgb(196,82,211)';
-    context.stroke();
+    //context.stroke();
   }
 
   function drawBall(spec){
-    context.drawImage(spec.image, spec.x, spec.y, spec.width, spec.height);
+    context.rect(spec.x, spec.y, spec.width, spec.height);
+    //context.drawImage(spec.image, spec.x, spec.y, spec.width, spec.height);
+    context.lineWidth = 3;
+    context.stroke();
   }
 
   function drawPaddle(spec){
-    console.log('paddle');
-    console.log(spec)
-    context.rect(spec.x, spec.y, spec.width, spec.height)
+    context.rect(spec.x, spec.y, spec.width, spec.height);
     context.lineWidth = 5;
     context.stroke();
+  }
+
+  function drawBrick(spec){
+    context.beginPath();
+    context.moveTo(spec.x, spec.y);
+    context.lineTo(spec.x+spec.width, spec.y);
+    context.lineTo(spec.x+spec.width, spec.y+spec.height);
+    context.lineTo(spec.x, spec.y+spec.height);
+    context.closePath();
+    // context.rect(spec.x, spec.y, spec.width, spec.height);
+    context.lineWidth = 3;
+    context.stroke();
+    //console.log('brick')
   }
 
   return {
@@ -47,6 +65,8 @@ let Graphics = (function(){
     drawOutline: drawOutline,
     drawPaddle: drawPaddle,
     drawBall: drawBall,
-    clear: clear
+    drawBrick: drawBrick,
+    clear: clear,
+    stroke: stroke
   };
 }());
