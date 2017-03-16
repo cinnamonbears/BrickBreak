@@ -8,7 +8,7 @@ let Objects = (function(){
     let y = spec.y;
     let height = spec.height;
     let width = spec.width;
-    let speed = 300;
+    let speed = spec.speed;
 
     that.getDimensions = function(){
       return {x, y, width, height};
@@ -37,6 +37,8 @@ let Objects = (function(){
     let that = {};
     let x = spec.x;
     let y = spec.y;
+    let xSpeed = spec.xSpeed;
+    let ySpeed = spec.ySpeed;
     let width = spec.width;
     let height = spec.height;
     let velocity = spec.velocity;
@@ -48,18 +50,18 @@ let Objects = (function(){
     }
 
     that.getDimensions = function(){
-      return {x, y, width, height};
+      return {x, y, width, height, xSpeed, ySpeed};
     }
 
     that.updateBallLoacation = function(elapsedTime){
       if(left){
-        x -= velocity*(elapsedTime/1000);
+        x -= xSpeed * velocity*(elapsedTime/1000);
       }else{
-        x += velocity*(elapsedTime/1000);
+        x += xSpeed * velocity*(elapsedTime/1000);
       }if(up){
-        y -= velocity*(elapsedTime/1000);
+        y -= ySpeed * velocity*(elapsedTime/1000);
       }else{
-        y += velocity*(elapsedTime/1000);
+        y += ySpeed * velocity*(elapsedTime/1000);
       }
     }
     that.reverseX = function(){
@@ -79,13 +81,14 @@ let Objects = (function(){
     let width = spec.width;
     let height = spec.height;
     let visible = spec.visible;
+    let brickImage =spec.image;
 
     that.getVisible = function(){
       return visible;
     }
 
     that.getDimensions = function(){
-      return {x, y, width, height};
+      return {x, y, width, height, brickImage};
     }
 
     that.update = function(){

@@ -30,8 +30,6 @@ let Graphics = (function(){
     context.lineTo(0,size-1);
     context.closePath();
     context.lineWidth = 10
-    //context.strokeStyle = 'rgb(196,82,211)';
-    //context.stroke();
   }
 
   function drawBall(spec){
@@ -48,16 +46,9 @@ let Graphics = (function(){
   }
 
   function drawBrick(spec){
-    context.beginPath();
-    context.moveTo(spec.x, spec.y);
-    context.lineTo(spec.x+spec.width, spec.y);
-    context.lineTo(spec.x+spec.width, spec.y+spec.height);
-    context.lineTo(spec.x, spec.y+spec.height);
-    context.closePath();
-    // context.rect(spec.x, spec.y, spec.width, spec.height);
-    context.lineWidth = 3;
-    context.stroke();
-    //console.log('brick')
+    context.save();
+    context.drawImage(spec.brickImage, spec.x, spec.y, 1000/14 -5 , 15);
+    context.restore();
   }
 
   return {

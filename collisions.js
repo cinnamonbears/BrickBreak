@@ -22,6 +22,12 @@ function checkPaddle(ball, paddle){
     if(b.x < p.x+p.width && b.x+b.width > p.x){
       ball.reverseY();
       let mid = p.x+(p.width/2);
+      // console.log(mid, b.x, b.x+b.width)
+      if(b.x > mid){
+        b.xSpeed += Math.min(b.xSpeed+0.5, 5);
+      }else{
+        b.xSpeed -= Math.max(1, b.xSpeed-0.5);
+      }
 
     }
   }
@@ -31,15 +37,15 @@ function checkPaddle(ball, paddle){
 function checkBricks(ball, bricks, r, heights, columns){
   let b = ball.getDimensions();
   for(let i =0; i < r.length; i++){
-    if(b.y >r[i] && b.y < r[i]+ heights){//} || b.y+b.height > ){
+    if(b.y > r[i] && b.y < r[i]+ heights){//} || b.y+b.height > ){
       for(let j = 0; j<columns; j++){
         if(bricks[i][j].getVisible()){
-          console.log('here')
           brick = bricks[i][j].getDimensions();
-          if(b.x <= brick.x+brick.width && b.x >= brick.x){
-            console.log('destroy');
-            bricks[i][j].update();
-            ball.reverseY();
+          if(!((b.x > brick.x+brick.width) || (brick.x > b.x+b.width) ||(b.y > brick.y+brick.height) ||(brick.y > b.y+b.height))){
+            if(b.x <= brick.x+brick.width && b.x >= brick.x){
+              bricks[i][j].update();
+              ball.reverseY();
+            }
           }
         }
       }
