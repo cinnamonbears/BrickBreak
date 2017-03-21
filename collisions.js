@@ -13,20 +13,36 @@ function checkBounds(ball){
   return false;
 }
 
+function setSpeed(mid, half, p){
+  console.log('Half:  ', half, 'mid: ', mid, ' Width: ', p)
+  let s = Math.abs(mid - p);
+  s = Math.abs(s - half);
+  s = s/half + 1;
+  return s;
+
+}
 
 function checkPaddle(ball, paddle){
   let b = ball.getDimensions();
   let p = paddle.getDimensions();
 
-  if(b.y+b.height >= p.y){
+  if(b.y+b.height >= p.y && b.y+b.height <= p.y +p.height){
     if(b.x < p.x+p.width && b.x+b.width > p.x){
       ball.reverseY();
-      let mid = p.x+(p.width/2);
-      // console.log(mid, b.x, b.x+b.width)
-      if(b.x > mid){
-        b.xSpeed += Math.min(b.xSpeed+0.5, 5);
+      let thirds = p.width/3;
+      let half   = p.width/2;
+      let mid    = b.x + b.width/2;
+      if((mid < p.x+half && !(b.left)) || (mid > p.x+half && b.left)){
+        ball.reverseX();
+      }
+      let s = setSpeed(mid, half, p.x);
+      console.log(s)
+      if(mid < p.x +thirds){
+        ball.updateSpeed(Math.min(2, s), 1);
+      }else if(mid < p.x + 2*thirds && mid > p.x + thirds){
+        ball.updateSpeed(0.25, 1.7);
       }else{
-        b.xSpeed -= Math.max(1, b.xSpeed-0.5);
+        ball.updateSpeed(Math.min(2, s), 1);
       }
 
     }

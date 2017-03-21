@@ -50,7 +50,12 @@ let Objects = (function(){
     }
 
     that.getDimensions = function(){
-      return {x, y, width, height, xSpeed, ySpeed};
+      return {x, y, width, height, xSpeed, ySpeed, left};
+    }
+
+    that.updateSpeed = function(xS, yS){
+      xSpeed = xS;
+      ySpeed = yS;
     }
 
     that.updateBallLoacation = function(elapsedTime){
@@ -59,9 +64,9 @@ let Objects = (function(){
       }else{
         x += xSpeed * velocity*(elapsedTime/1000);
       }if(up){
-        y -= ySpeed * velocity*(elapsedTime/1000);
+        y -= ySpeed * velocity * (elapsedTime/1000);
       }else{
-        y += ySpeed * velocity*(elapsedTime/1000);
+        y += ySpeed *  velocity * (elapsedTime/1000);
       }
     }
     that.reverseX = function(){
