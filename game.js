@@ -2,12 +2,16 @@
 
 let BrickBreak = (function(){
   let that = {};
+  let lives = 4;
+  let pause = true;
   let res = 1000;
   let paddle;
   let ball;
   let bricks = [];
   let myKeyboard = MyInput.Keyboard();
   var lastTimeStamp = performance.now();
+  var curTime = 0;
+  let seconds = 0;
   let gameOver = false;
   let columns = 0;
   let rows = 0;
@@ -20,11 +24,42 @@ let BrickBreak = (function(){
     myKeyboard.update(elapsedTime);
   }
 
+  function startGame(){
+    pause = false;
+  }
+
+  function stopGame(){
+    pause = true;
+  }
+
   function update(elapsedTime){
     gameOver = checkBounds(ball);
-    ball.updateBallLoacation(elapsedTime);
-    checkPaddle(ball, paddle);
-    checkBricks(ball, bricks, rowBounds, heights, columns);
+    if(gameOver){
+      softReset();
+    }
+    if(pause){
+      ball.updateStartLocation(paddle.getDimensions());
+      if(seconds > 2){
+        startGame();
+      }
+    }else{
+      ball.updateBallLoacation(elapsedTime);
+      checkPaddle(ball, paddle);
+      checkBricks(ball, bricks, rowBounds, heights, columns);
+    }
+  }
+
+  function softReset(){
+    stopGame();
+    lives-=1;
+    gameOver = false;
+    lastTimeStamp = performance.now();
+    curTime = 0;
+    seconds = 0;
+    if(lives > 0){
+      paddle = generatePaddle();
+      ball = generateBall(paddle.getDimensions());
+    }
   }
 
   function render(){
@@ -42,14 +77,48 @@ let BrickBreak = (function(){
   }
 
   function gameLoop(time){
-    if(!gameOver){
+    if(lives > 0){
       var elapsedTime = time - lastTimeStamp;
+      curTime += elapsedTime;
+      if(curTime > 1000){
+        curTime -= 1000;
+        seconds += 1;
+        console.log('seconds: ', seconds);
+      }
       lastTimeStamp = time;
       getInput(elapsedTime);
       update(elapsedTime);
       render();
       requestAnimationFrame(gameLoop);
     }
+  }
+
+  function generatePaddle(){
+    paddle = Objects.Paddle({
+      x: 450,
+      y: 970,
+      width: 250,
+      height: 15,
+      speed: 300
+    });
+    myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
+  	myKeyboard.registerCommand(KeyEvent.DOM_VK_D, paddle.moveRight);
+  	myKeyboard.registerCommand(KeyEvent.DOM_VK_SPACE, startGame);
+    return paddle;
+  }
+
+  function generateBall(paddle){
+    ball = Objects.Ball({
+      // x: 490,
+      x: paddle.x+paddle.width/2,
+      y: 950,
+      xSpeed: 1,
+      ySpeed: 1,
+      width: 10,
+      height: 10,
+      velocity: 300
+    });
+    return ball;
   }
 
   function generateBricks(r, c){
@@ -92,27 +161,11 @@ let BrickBreak = (function(){
 
   that.initialize = function(){
     Graphics.initialize();
-    paddle = Objects.Paddle({
-      x: 450,
-      y: 970,
-      width: 150,
-      height: 15,
-      speed: 300
-    });
-    ball = Objects.Ball({
-      x: 490,
-      y: 950,
-      xSpeed: 1,
-      ySpeed: 1,
-      width: 10,
-      height: 10,
-      velocity: 300
-    });
+    paddle =generatePaddle();
+    ball = generateBall(paddle.getDimensions());
     rows = 8;
     columns = 14;
     generateBricks(rows, columns)
-    myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
-  	myKeyboard.registerCommand(KeyEvent.DOM_VK_D, paddle.moveRight);
     requestAnimationFrame(gameLoop)
   }
 

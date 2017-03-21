@@ -7,7 +7,6 @@ function checkBounds(ball){
     ball.reverseY();
   }
   if(b.y > 1000){
-    console.log('Gameover')
     return true;
   }
   return false;
@@ -19,7 +18,6 @@ function setSpeed(mid, half, p){
   s = Math.abs(s - half);
   s = s/half + 1;
   return s;
-
 }
 
 function checkPaddle(ball, paddle){

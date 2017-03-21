@@ -14,6 +14,10 @@ let Objects = (function(){
       return {x, y, width, height};
     }
 
+    that.shrinkPaddle = function(){
+      width = width/2;
+    }
+
     that.moveLeft = function(time){
       if(x >= 0){
         x -= speed*(time / 1000);
@@ -47,6 +51,10 @@ let Objects = (function(){
 
     that.update = function(movement){
       spec.location += movement
+    }
+
+    that.updateStartLocation =  function(paddle){
+      x = paddle.x+paddle.width/2;
     }
 
     that.getDimensions = function(){
