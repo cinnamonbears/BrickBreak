@@ -48,6 +48,7 @@ let Objects = (function(){
     let velocity = spec.velocity;
     let left = true;
     let up = true;
+    let ballImage = spec.image;
 
     that.update = function(movement){
       spec.location += movement
@@ -58,7 +59,7 @@ let Objects = (function(){
     }
 
     that.getDimensions = function(){
-      return {x, y, width, height, xSpeed, ySpeed, left};
+      return {x, y, width, height, xSpeed, ySpeed, left, ballImage};
     }
 
     that.updateSpeed = function(xS, yS){

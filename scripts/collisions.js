@@ -13,7 +13,7 @@ function checkBounds(ball){
 }
 
 function setSpeed(mid, half, p){
-  console.log('Half:  ', half, 'mid: ', mid, ' Width: ', p)
+  // console.log('Half:  ', half, 'mid: ', mid, ' Width: ', p)
   let s = Math.abs(mid - p);
   s = Math.abs(s - half);
   s = s/half + 1;
@@ -42,7 +42,6 @@ function checkPaddle(ball, paddle){
       }else{
         ball.updateSpeed(Math.min(2, s), 1);
       }
-
     }
   }
 

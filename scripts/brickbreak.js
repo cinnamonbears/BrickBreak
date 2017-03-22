@@ -2,23 +2,27 @@
 
 let BrickBreak = (function(){
   let that = {};
-  let lives = 4;
-  let pause = true;
-  let res = 1000;
+  let lives;
+  let pause;
+  let restart;
+  let res;
   let paddle;
   let ball;
-  let bricks = [];
-  let myKeyboard = MyInput.Keyboard();
-  var lastTimeStamp = performance.now();
-  var curTime = 0;
-  let seconds = 0;
-  let gameOver = false;
-  let columns = 0;
-  let rows = 0;
-  let startHeight = 200;
+  let bricks;
+  let myKeyboard;
+  var lastTimeStamp;
+  var curTime;
+  let seconds;
+  let gameOver;
+  let columns;
+  let rows;
+  let score;
+  let startHeight = 20;
   let rowBounds = [];
   let heights = 20;
   let images = ['Images/yellow.png', 'Images/orange.png', 'Images/blue.png', 'Images/green.png'];
+  let ballPath = 'Images/hammer.png'
+
 
   function getInput(elapsedTime){
     myKeyboard.update(elapsedTime);
@@ -62,6 +66,10 @@ let BrickBreak = (function(){
     }
   }
 
+  that.quitGame = function(){
+    restart = true;
+  }
+
   function render(){
     Graphics.clear();
     Graphics.drawPaddle(paddle.getDimensions());
@@ -83,13 +91,15 @@ let BrickBreak = (function(){
       if(curTime > 1000){
         curTime -= 1000;
         seconds += 1;
-        console.log('seconds: ', seconds);
+        // console.log('seconds: ', seconds);
       }
       lastTimeStamp = time;
       getInput(elapsedTime);
       update(elapsedTime);
       render();
-      requestAnimationFrame(gameLoop);
+      if(!restart){
+        requestAnimationFrame(gameLoop);
+      }
     }
   }
 
@@ -102,12 +112,20 @@ let BrickBreak = (function(){
       speed: 300
     });
     myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
+    myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, paddle.moveLeft);
   	myKeyboard.registerCommand(KeyEvent.DOM_VK_D, paddle.moveRight);
+  	myKeyboard.registerCommand(KeyEvent.DOM_VK_RIGHT, paddle.moveRight);
   	myKeyboard.registerCommand(KeyEvent.DOM_VK_SPACE, startGame);
     return paddle;
   }
 
   function generateBall(paddle){
+    let ballImage = new Image();
+    ballImage.isReady = false;
+    ballImage.onload = function(){
+      this.isReady = true;
+    }
+    ballImage.src = ballPath;
     ball = Objects.Ball({
       // x: 490,
       x: paddle.x+paddle.width/2,
@@ -116,7 +134,8 @@ let BrickBreak = (function(){
       ySpeed: 1,
       width: 10,
       height: 10,
-      velocity: 300
+      velocity: 300,
+      image: ballImage
     });
     return ball;
   }
@@ -161,10 +180,21 @@ let BrickBreak = (function(){
 
   that.initialize = function(){
     Graphics.initialize();
-    paddle =generatePaddle();
-    ball = generateBall(paddle.getDimensions());
     rows = 8;
     columns = 14;
+    lives = 4;
+    pause = true;
+    restart = false;
+    res = 1000;
+    myKeyboard = MyInput.Keyboard();
+    lastTimeStamp = performance.now();
+    bricks = [];
+    curTime = 0;
+    seconds = 0;
+    score = 0;
+    gameOver = false;
+    paddle =generatePaddle();
+    ball = generateBall(paddle.getDimensions());
     generateBricks(rows, columns)
     requestAnimationFrame(gameLoop)
   }

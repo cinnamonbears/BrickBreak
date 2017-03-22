@@ -33,10 +33,13 @@ let Graphics = (function(){
   }
 
   function drawBall(spec){
-    context.rect(spec.x, spec.y, spec.width, spec.height);
+    // context.rect(spec.x, spec.y, spec.width, spec.height);
+    context.save();
+    context.drawImage(spec.ballImage, spec.x, spec.y, spec.width+10, spec.height+15);
+    context.restore();
     //context.drawImage(spec.image, spec.x, spec.y, spec.width, spec.height);
-    context.lineWidth = 3;
-    context.stroke();
+    // context.lineWidth = 3;
+    // context.stroke();
   }
 
   function drawPaddle(spec){
