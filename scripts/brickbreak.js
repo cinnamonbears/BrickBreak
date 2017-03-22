@@ -9,6 +9,7 @@ let BrickBreak = (function(){
   let paddle;
   let ball;
   let bricks;
+  let halfPaddle;
   let myKeyboard;
   var lastTimeStamp;
   var curTime;
@@ -16,8 +17,11 @@ let BrickBreak = (function(){
   let gameOver;
   let columns;
   let rows;
-  let score;
-  let startHeight = 20;
+  let score = 0;
+  let curScore = 0;
+  let brickCount = 0;
+  let curBalls = [];
+  let startHeight = 200;
   let rowBounds = [];
   let heights = 20;
   let images = ['Images/yellow.png', 'Images/orange.png', 'Images/blue.png', 'Images/green.png'];
@@ -36,9 +40,34 @@ let BrickBreak = (function(){
     pause = true;
   }
 
+  function checkCurScore(){
+    if(curScore >= 100){
+      console.log('over 100')
+      curScore -=100;
+      ball = generateBall(paddle.getDimensions());
+      curBalls.push(ball);
+    }
+  }
+
+  function increaseSpeed(b){
+    if(brickCount === 4 && b.getMultipler === 0.5){
+      console.log('increaseSpeed');
+    }
+  }
+
+  function setScore(){
+    console.log('doing something')
+  }
+
   function update(elapsedTime){
-    gameOver = checkBounds(ball);
-    if(gameOver){
+    for(let i = 0; i < curBalls.length; ++i){
+        gameOver = checkBounds(curBalls[i]);
+        if(gameOver){
+          curBalls.splice(i, 1);
+        }
+        gameOver = false;
+    }
+    if(curBalls.length < 1){
       softReset();
     }
     if(pause){
@@ -47,9 +76,23 @@ let BrickBreak = (function(){
         startGame();
       }
     }else{
-      ball.updateBallLoacation(elapsedTime);
-      checkPaddle(ball, paddle);
-      checkBricks(ball, bricks, rowBounds, heights, columns);
+      for(let i = 0; i < curBalls.length; ++i){
+        curBalls[i].updateBallLoacation(elapsedTime);
+        checkPaddle(curBalls[i], paddle);
+        let info = checkBricks(curBalls[i], bricks, rowBounds, heights, columns);
+        score += info.score;
+        curScore += info.score;
+        if(info.score != 0){
+          brickCount += 1;
+        }
+        checkCurScore(curBalls[i]);
+        if(halfPaddle === false){
+          if(info.row === 5){
+            paddle.shrinkPaddle();
+            halfPaddle = true;
+          }
+        }
+      }
     }
   }
 
@@ -60,9 +103,16 @@ let BrickBreak = (function(){
     lastTimeStamp = performance.now();
     curTime = 0;
     seconds = 0;
+    curScore = 0;
+    brickCount = 0;
+    curBalls.length = 0;
     if(lives > 0){
       paddle = generatePaddle();
+      if(halfPaddle){
+        paddle.shrinkPaddle();
+      }
       ball = generateBall(paddle.getDimensions());
+      curBalls[0] = ball;
     }
   }
 
@@ -80,7 +130,9 @@ let BrickBreak = (function(){
         }
       }
     }
-    Graphics.drawBall(ball.getDimensions());
+    for(let i = 0; i < curBalls.length; ++i){
+      Graphics.drawBall(curBalls[i].getDimensions());
+    }
     Graphics.drawOutline(res);
   }
 
@@ -109,7 +161,7 @@ let BrickBreak = (function(){
       y: 970,
       width: 250,
       height: 15,
-      speed: 300
+      speed: 400
     });
     myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
     myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, paddle.moveLeft);
@@ -126,8 +178,10 @@ let BrickBreak = (function(){
       this.isReady = true;
     }
     ballImage.src = ballPath;
+    console.log(paddle.x);
+    console.log(paddle.width);
+    console.log(2);
     ball = Objects.Ball({
-      // x: 490,
       x: paddle.x+paddle.width/2,
       y: 950,
       xSpeed: 1,
@@ -135,6 +189,7 @@ let BrickBreak = (function(){
       width: 10,
       height: 10,
       velocity: 300,
+      multiplier: 0.5,
       image: ballImage
     });
     return ball;
@@ -151,17 +206,22 @@ let BrickBreak = (function(){
       brickImage.onload = function(){
         this.isReady = true;
       }
+      let value;
       if(row === 0 || row === 1){
         brickImage.src = images[0];
+        value = 5;
       }
       if(row === 2 || row === 3){
         brickImage.src = images[1];
+        value = 3;
       }
       if(row === 4 || row === 5){
         brickImage.src = images[2];
+        value = 2;
       }
       if(row === 6 || row === 7){
         brickImage.src = images[3];
+        value = 25;
       }
 
       for(let col  = 0; col < c; ++ col){
@@ -171,7 +231,8 @@ let BrickBreak = (function(){
           width: res/c - 5,
           height: heights - 5,
           visible: true,
-          image: brickImage
+          image: brickImage,
+          value: value
         })
       }
     }
@@ -192,9 +253,13 @@ let BrickBreak = (function(){
     curTime = 0;
     seconds = 0;
     score = 0;
+    curScore = 0;
     gameOver = false;
+    halfPaddle = false;
+    brickCount = 0;
     paddle =generatePaddle();
     ball = generateBall(paddle.getDimensions());
+    curBalls[0] = ball;
     generateBricks(rows, columns)
     requestAnimationFrame(gameLoop)
   }

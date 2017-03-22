@@ -49,9 +49,21 @@ let Objects = (function(){
     let left = true;
     let up = true;
     let ballImage = spec.image;
+    let broke = 0;
+    let multiplier = spec.multiplier;
 
     that.update = function(movement){
       spec.location += movement
+    }
+
+    that.broken = function (){
+      broke += 1;
+    }
+    that.getBroken = function(){
+      return broke;
+    }
+    that.setMultiplier = function(){
+      multiplier +=.25
     }
 
     that.updateStartLocation =  function(paddle){
@@ -69,13 +81,13 @@ let Objects = (function(){
 
     that.updateBallLoacation = function(elapsedTime){
       if(left){
-        x -= xSpeed * velocity*(elapsedTime/1000);
+        x -= xSpeed * multiplier * velocity*(elapsedTime/1000);
       }else{
-        x += xSpeed * velocity*(elapsedTime/1000);
+        x += xSpeed * multiplier * velocity*(elapsedTime/1000);
       }if(up){
-        y -= ySpeed * velocity * (elapsedTime/1000);
+        y -= ySpeed * multiplier * velocity * (elapsedTime/1000);
       }else{
-        y += ySpeed *  velocity * (elapsedTime/1000);
+        y += ySpeed *  multiplier * velocity * (elapsedTime/1000);
       }
     }
     that.reverseX = function(){
@@ -96,6 +108,7 @@ let Objects = (function(){
     let height = spec.height;
     let visible = spec.visible;
     let brickImage =spec.image;
+    let value = spec.value;
 
     that.getVisible = function(){
       return visible;
@@ -103,6 +116,10 @@ let Objects = (function(){
 
     that.getDimensions = function(){
       return {x, y, width, height, brickImage};
+    }
+
+    that.getValue = function(){
+      return value
     }
 
     that.update = function(){
