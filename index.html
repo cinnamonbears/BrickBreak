@@ -16,27 +16,39 @@
 			</ul>
     </div>
     <div id="game-play" class="screen">
-      <canvas id = "canvas-main" width = "1000" height = "1000" style = "width: 90%; height: 90%"></canvas>
+      <div class = "header">
+        <div class="scoring" id = "score"></div>
+        <div class="lives-display" id = "lives"></div>
+      </div>
+      <div class="gameScreen">
+        <canvas id = "canvas-main" width = "1000" height = "1000" style = "width: 70%; height: 70%"></canvas>
+      </div>
       <ul class = "menu">
 				<li><button id = "id-game-play-back">Back</button></li>
 			</ul>
     </div>
     <div id="high-scores" class="screen">
+      <h1>High Scores:</h1>
+      <div id="bbHighScores">
+
+      </div>
       <ul class = "menu">
 				<li><button id = "id-high-scores-back">Back</button></li>
 			</ul>
     </div>
     <div id="about" class="screen">
-      <h1>About</h1>
+      <h1>Brick Breaker:</h1>
       <p>Developed by</p>
       <p>Logan Smith</p>
+      <p>Game Development</p>
       <ul class = "menu">
         <li><button id = "id-about-back">Back</button></li>
       </ul>
     </div>
     <div id="help" class="screen">
       <h1>Help</h1>
-      <p>This is some help on how to play the game</p>
+      <p>Wait for the countdown or press spacebar to start the game</p>
+      <p>Use a or left arrow to move left, right or right arrow to move right</p>
       <ul class = "menu">
         <li><button id = "id-help-back">Back</button></li>
       </ul>
@@ -46,6 +58,8 @@
   <script src ="scripts/input.js"></script>
   <script src = "scripts/objects.js"></script>
   <script src = "scripts/graphics.js"></script>
+  <script src = "scripts/random.js"></script>
+  <script src = "scripts/ParticleSystem.js"></script>
   <script src = "scripts/collisions.js"></script>
   <script src = "scripts/brickbreak.js"></script>
 

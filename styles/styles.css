@@ -8,8 +8,23 @@ body {
 	top: 0;
 	width: 1000px;
 	height: 1000px;
-	background-color: rgb(239,239,251);
+	background-color: #202022;
 	font-size: 40px;
+}
+
+#game .gameScreen{
+	background-color: #DBDBD9;
+	text-align: center;
+	padding-top: 1em;
+	padding-left: 1em;
+	float: left
+}
+
+#game .scoring{
+	text-align: center;
+	color: #5AFE3D;
+	padding-top: 1em;
+	padding-left: 1em;
 }
 
 #game .screen {
@@ -44,13 +59,10 @@ ul.menu li {
 ul.menu li button {
 	font-family: Arial, sans-serif;
 	font-size: 0.6em;
-	color: #CECEF6;
-	width: 10em;
-	height: 1.5em;
-	background: #0404B4;
-	border: 0.1em solid rgb(255, 0, 0);
+	color: #5AFE3D;
+	background: #BF00FE;
+	border: 0.1em solid;
 	border-radius: 0.5em;
-	box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
 }
 
 ul.menu li button:hover {
@@ -67,11 +79,16 @@ ul.menu li button:active {
 	text-align: center;
 }
 
-#high-scores ol {
+#high-scores{
+	color: #BF00FE;
+	padding-top: 2em;;
+}
+
+#high-scores #bbHighScores{
+	color: #5AFE3D;
 	text-align: center;
 	padding: 0;
 	margin: 0;
-	list-style: none;
 }
 
 #game div p {
@@ -80,4 +97,15 @@ ul.menu li button:active {
 
 #about p {
 	text-align: center;
+	color: #5AFE3D;
+}
+#about h1{
+	color: #BF00FE;
+}
+#help h1{
+	color: #BF00FE;
+}
+#help p{
+	color: #5AFE3D;
+	padding-left: 1em;
 }

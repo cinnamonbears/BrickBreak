@@ -20,13 +20,26 @@ let BrickBreak = (function(){
   let score = 0;
   let curScore = 0;
   let brickCount = 0;
+  let secondsLeft = 0;
   let curBalls = [];
   let startHeight = 200;
   let rowBounds = [];
   let heights = 20;
   let images = ['Images/yellow.png', 'Images/orange.png', 'Images/blue.png', 'Images/green.png'];
-  let ballPath = 'Images/hammer.png'
+  let ballPath = 'Images/hammer.png';
+  let paddlePath = 'Images/plank.png';
+  let activeParticles = [];
+  let particlesToRender = [];
+  let paddleLives = new Image();
+  paddleLives.isReady = false;
+  paddleLives.onload = function(){
+    this.isReady = true;
+  }
+  paddleLives.src = paddlePath;
 
+  that.quitGame = function(){
+    restart = true;
+  }
 
   function getInput(elapsedTime){
     myKeyboard.update(elapsedTime);
@@ -49,14 +62,31 @@ let BrickBreak = (function(){
     }
   }
 
-  function increaseSpeed(b){
-    if(brickCount === 4 && b.getMultipler === 0.5){
-      console.log('increaseSpeed');
-    }
+  function setScore(){
+    console.log(score)
+    MyGame.persistance.add(
+      Math.floor((Math.random()*100000)), score
+    )
   }
 
-  function setScore(){
-    console.log('doing something')
+  function softReset(){
+    stopGame();
+    lives-=1;
+    gameOver = false;
+    lastTimeStamp = performance.now();
+    curTime = 0;
+    seconds = 0;
+    curScore = 0;
+    brickCount = 0;
+    curBalls.length = 0;
+    if(lives > 0){
+      paddle = generatePaddle();
+      if(halfPaddle){
+        paddle.shrinkPaddle();
+      }
+      ball = generateBall(paddle.getDimensions());
+      curBalls[0] = ball;
+    }
   }
 
   function update(elapsedTime){
@@ -82,42 +112,33 @@ let BrickBreak = (function(){
         let info = checkBricks(curBalls[i], bricks, rowBounds, heights, columns);
         score += info.score;
         curScore += info.score;
+        let particleBrick = {j: info.col, i: info.row}
+        if(info.row !== -1){
+          particlesToRender.push(particleBrick);
+        }
+        for(let p = 0; p<particlesToRender.length; ++p){
+          console.log(particlesToRender)
+          console.log(particlesToRender.length);
+          let k = particlesToRender[p].j
+          let l = particlesToRender[p].i
+          if(!(activeParticles[l][k].returnParticles())){
+            console.log('slicing', p);
+            particlesToRender.splice(p, 1);
+          }
+          activeParticles[l][k].update(elapsedTime);
+        }
         if(info.score != 0){
           brickCount += 1;
         }
         checkCurScore(curBalls[i]);
         if(halfPaddle === false){
-          if(info.row === 5){
+          if(info.row === 0){
             paddle.shrinkPaddle();
             halfPaddle = true;
           }
         }
       }
     }
-  }
-
-  function softReset(){
-    stopGame();
-    lives-=1;
-    gameOver = false;
-    lastTimeStamp = performance.now();
-    curTime = 0;
-    seconds = 0;
-    curScore = 0;
-    brickCount = 0;
-    curBalls.length = 0;
-    if(lives > 0){
-      paddle = generatePaddle();
-      if(halfPaddle){
-        paddle.shrinkPaddle();
-      }
-      ball = generateBall(paddle.getDimensions());
-      curBalls[0] = ball;
-    }
-  }
-
-  that.quitGame = function(){
-    restart = true;
   }
 
   function render(){
@@ -133,35 +154,50 @@ let BrickBreak = (function(){
     for(let i = 0; i < curBalls.length; ++i){
       Graphics.drawBall(curBalls[i].getDimensions());
     }
+    for(let p = 0; p<particlesToRender.length; ++p){
+      let k = particlesToRender[p].j
+      let l = particlesToRender[p].i
+      activeParticles[l][k].render();
+    }
     Graphics.drawOutline(res);
-  }
-
-  function gameLoop(time){
-    if(lives > 0){
-      var elapsedTime = time - lastTimeStamp;
-      curTime += elapsedTime;
-      if(curTime > 1000){
-        curTime -= 1000;
-        seconds += 1;
-        // console.log('seconds: ', seconds);
-      }
-      lastTimeStamp = time;
-      getInput(elapsedTime);
-      update(elapsedTime);
-      render();
-      if(!restart){
-        requestAnimationFrame(gameLoop);
+    Graphics.drawLives(lives - 1, paddleLives);
+    var scoreNode = document.getElementById('score');
+    scoreNode.innerHTML = "&nbsp;Score:<br>" + score;
+    if(pause){
+      if(lives > 0){
+        // console.log(lives)
+        Graphics.countDown(secondsLeft - seconds);
+      }else{
+        Graphics.gameOver("Game Over");
       }
     }
   }
 
+  function generateParticles(brick){
+    let particle = ParticleSystem({
+      image: 'Images/SmallRocks.png',
+      center: {x: brick.x+brick.width/2, y: brick.y+brick.height/2},
+      speed: {mean: 40, stdev: 20},
+      lifetime: {mean:3, stdev: 1}
+    },
+    Graphics)
+    return particle;
+  }
+
   function generatePaddle(){
+    let paddleImage = new Image();
+    paddleImage.isReady = false;
+    paddleImage.onload = function(){
+      this.isReady = true;
+    }
+    paddleImage.src = paddlePath;
     paddle = Objects.Paddle({
       x: 450,
       y: 970,
       width: 250,
       height: 15,
-      speed: 400
+      speed: 400,
+      image: paddleImage
     });
     myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
     myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, paddle.moveLeft);
@@ -178,9 +214,6 @@ let BrickBreak = (function(){
       this.isReady = true;
     }
     ballImage.src = ballPath;
-    console.log(paddle.x);
-    console.log(paddle.width);
-    console.log(2);
     ball = Objects.Ball({
       x: paddle.x+paddle.width/2,
       y: 950,
@@ -199,6 +232,7 @@ let BrickBreak = (function(){
     bricks.length = 0;
     for(let row = 0; row < r; row++){
       bricks[row] = [];
+      activeParticles[row] = [];
       rowBounds[row] = startHeight+(row*heights);
 
       let brickImage = new Image();
@@ -221,7 +255,7 @@ let BrickBreak = (function(){
       }
       if(row === 6 || row === 7){
         brickImage.src = images[3];
-        value = 25;
+        value = 1;
       }
 
       for(let col  = 0; col < c; ++ col){
@@ -234,9 +268,35 @@ let BrickBreak = (function(){
           image: brickImage,
           value: value
         })
+        let p = generateParticles(bricks[row][col].getDimensions());
+        p.create();
+        activeParticles[row][col] = p;
       }
     }
-    console.log('row: ',rowBounds)
+  }
+
+  function gameLoop(time){
+    if(lives > 0){
+      var elapsedTime = time - lastTimeStamp;
+      curTime += elapsedTime;
+      if(curTime > 1000){
+        curTime -= 1000;
+        seconds += 1;
+        // console.log('seconds: ', seconds);
+      }
+      lastTimeStamp = time;
+      getInput(elapsedTime);
+      update(elapsedTime);
+      render();
+      if(!restart){
+        requestAnimationFrame(gameLoop);
+      }else{
+        setScore();
+      }
+    }else{
+      setScore();
+    }
+
   }
 
   that.initialize = function(){
@@ -254,12 +314,15 @@ let BrickBreak = (function(){
     seconds = 0;
     score = 0;
     curScore = 0;
+    secondsLeft = 3;
     gameOver = false;
     halfPaddle = false;
     brickCount = 0;
+    particlesToRender = [];
     paddle =generatePaddle();
     ball = generateBall(paddle.getDimensions());
     curBalls[0] = ball;
+    activeParticles = [];
     generateBricks(rows, columns)
     requestAnimationFrame(gameLoop)
   }

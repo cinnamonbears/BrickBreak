@@ -3,7 +3,7 @@ function checkBounds(ball){
   if(b.x < 0 || b.x+b.width > 1000){
     ball.reverseX();
   }
-  if(b.y < 0){
+  if(b.y < 40){
     ball.reverseY();
   }
   if(b.y > 1000){
@@ -18,6 +18,7 @@ function setSpeed(mid, half, p){
   s = s/half + 1;
   return s;
 }
+
 
 function checkPaddle(ball, paddle){
   let b = ball.getDimensions();
@@ -82,12 +83,15 @@ function checkBricks(ball, bricks, r, heights, columns){
               }
               ball.reverseY();
               ball.broken();
+              // let p = createPSystem(bricks[i][j].getDimensions())
+              //  console.log(p)
               if(ball.getBroken() == 4 || ball.getBroken() == 12 || ball.getBroken() == 36 || ball.getBroken() == 62){
                 ball.setMultiplier();
               }
               return {
                 score: bricks[i][j].getValue() + extra,
-                row: i
+                row: i,
+                col: j
               }
           }
         }
@@ -96,6 +100,7 @@ function checkBricks(ball, bricks, r, heights, columns){
   }
   return {
     score: 0,
-    row: -1
+    row: -1,
+    col: -1,
   }
 }

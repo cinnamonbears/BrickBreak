@@ -2,16 +2,16 @@ let Objects = (function(){
   let that = {};
 
   function Paddle(spec){
-    console.log(spec)
     let that = {};
     let x = spec.x;
     let y = spec.y;
     let height = spec.height;
     let width = spec.width;
     let speed = spec.speed;
+    let paddleImage = spec.image;
 
     that.getDimensions = function(){
-      return {x, y, width, height};
+      return {x, y, width, height, paddleImage};
     }
 
     that.shrinkPaddle = function(){
@@ -109,9 +109,18 @@ let Objects = (function(){
     let visible = spec.visible;
     let brickImage =spec.image;
     let value = spec.value;
+    let particles = false;
 
     that.getVisible = function(){
       return visible;
+    }
+
+    that.getParticles = function(){
+      return particles;
+    }
+
+    that.setParticles = function(){
+      particles = true;
     }
 
     that.getDimensions = function(){
